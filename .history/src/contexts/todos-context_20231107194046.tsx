@@ -1,0 +1,34 @@
+import { TTodoItem } from "@/types/todo";
+import { ReactNode, createContext, useEffect, useState } from "react";
+
+export const TodosContext = createContext<{
+  todos: TTodoItem[];
+  addTodo: (todo: TTodoItem) => void;
+  removeTodo: (id: string) => void;
+}>;
+
+export const TodosProvider = ({ children }: { children: ReactNode }) => {
+  const [todos, setTodos] = useState<TTodoItem[]>([]);
+
+  useEffect(() => {
+    // fetch todos from server
+    setTodos([
+      { id: 1, title: "todo 1" },
+      { id: 2, title: "todo 2" },
+    ]);
+  }, []);
+
+  const addTodo = (todo: TTodoItem) => {
+    setTodos((prev) => [...prev, todo]);
+  };
+
+  const removeTodo = (id: string) => {
+    setTodos((prev) => prev.filter((todo) => todo.id !== id));
+  };
+
+  return (
+    <TodosContext.Provider value={{ todos, addTodo, removeTodo }}>
+      {children}
+    </TodosContext.Provider>
+  );
+};
