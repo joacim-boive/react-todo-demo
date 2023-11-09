@@ -2,9 +2,6 @@ import { FormNewTodo } from "@components/form-new-todo";
 import { ModeToggle } from "@components/mode-toggle";
 import { Card } from "@components/ui";
 
-import { io } from "socket.io-client";
-const socket = io("http://localhost:4000");
-
 import "./App.css";
 import { ListTodos } from "./components/list-todos";
 

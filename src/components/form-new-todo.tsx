@@ -33,9 +33,11 @@ export const FormNewTodo = () => {
     const todo = {
       id: Math.random().toString(),
       title: data.title,
+      isCompleted: false,
     };
 
     addTodo(todo);
+    form.reset();
   };
 
   return (
