@@ -1,3 +1,4 @@
+import { Theme } from "@/contexts/theme-context";
 import {
   Dialog,
   DialogContent,
@@ -8,29 +9,38 @@ import {
 
 import { useLongPress } from "@/hooks/use-long-press";
 import { Button } from "@components/ui/button";
-import { Moon, Sun } from "lucide-react";
 import { useTheme } from "../../contexts/theme-context";
 
 const ToggleMobile = () => {
   const { showMenu, setShowMenu } = useLongPress();
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, themes, themeIcons } = useTheme();
 
-  const handleThemeChange = () => {
+  const handleThemeChange = (theme: Theme) => {
     setShowMenu(false);
-    setTheme(theme === "light" ? "dark" : "light");
+    setTheme(theme);
   };
 
   return (
-    <Dialog open={showMenu}>
+    <Dialog open={showMenu} onOpenChange={setShowMenu}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Set the theme</DialogTitle>
           <DialogDescription>
-            <Button variant="outline" size="icon" onClick={handleThemeChange}>
-              <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-              <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-              <span className="sr-only">Toggle theme</span>
-            </Button>
+            <div className="mb-4">{`Currently set to ${theme}.`}</div>
+            {themes.map((theme) => {
+              const Icon = themeIcons[theme];
+              return (
+                <Button
+                  key={theme}
+                  variant="outline"
+                  onClick={() => handleThemeChange(theme)}
+                  className="ml-2"
+                >
+                  <Icon className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all" />
+                  <span className="sr-only">Set theme to {theme}</span>
+                </Button>
+              );
+            })}
           </DialogDescription>
         </DialogHeader>
       </DialogContent>
