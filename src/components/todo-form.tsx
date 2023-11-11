@@ -49,7 +49,7 @@ export const TodoForm = () => {
             <div className="grid items-center grid-cols-10 gap-4">
               <Button
                 type="button"
-                variant="ghost"
+                variant="transparent"
                 size="icon"
                 className="flex items-center justify-start"
               >
