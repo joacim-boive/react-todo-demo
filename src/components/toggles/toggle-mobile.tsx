@@ -26,7 +26,7 @@ const ToggleMobile = () => {
         <DialogHeader>
           <DialogTitle>Set the theme</DialogTitle>
           <DialogDescription>
-            <div className="mb-4">{`Currently set to ${theme}.`}</div>
+            <span className="block mb-4">{`Currently set to ${theme}.`}</span>
             {themes.map((theme) => {
               const Icon = themeIcons[theme];
               return (

@@ -28,7 +28,7 @@ export const useLongPress = (delay: number = 500) => {
       }
     };
 
-    const root = document.getElementById("root");
+    const root = document.querySelector("html");
     if (root) {
       root.addEventListener("touchstart", handleTouchStart);
       root.addEventListener("touchend", handleTouchEnd);
