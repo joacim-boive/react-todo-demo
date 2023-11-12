@@ -1,11 +1,5 @@
 import { TTodoItem } from "@/types/todo";
-import {
-  ReactNode,
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { ReactNode, createContext, useEffect, useState } from "react";
 import { io } from "socket.io-client";
 const socket = io("http://localhost:4000");
 
@@ -88,15 +82,4 @@ export const TodosProvider = ({ children }: { children: ReactNode }) => {
       {children}
     </TodosContext.Provider>
   );
-};
-
-// eslint-disable-next-line react-refresh/only-export-components
-export const useTodoContext = () => {
-  const context = useContext(TodosContext);
-
-  if (!context) {
-    throw new Error("useTodoContext must be used within a TodosProvider");
-  }
-
-  return context;
 };

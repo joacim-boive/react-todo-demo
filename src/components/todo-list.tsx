@@ -1,16 +1,16 @@
-import { useTodoContext } from "@/contexts/todos-context";
+import { useTodo } from "@/hooks/use-todo";
 import { TodoItem } from "@components/todo-item";
 import { FC } from "react";
 
-export const ListTodos: FC = () => {
-  const { todos } = useTodoContext();
+export const TodoList: FC = () => {
+  const { todos } = useTodo();
   return (
-    <div>
-      <ol className="list-none p-0 space-y-4">
+    <>
+      <ol className="list-none">
         {todos.map((todo) => (
           <TodoItem key={todo.id} todo={todo} />
         ))}
       </ol>
-    </div>
+    </>
   );
 };

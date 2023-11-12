@@ -1,6 +1,11 @@
+import {
+  Moon as DarkIcon,
+  Sun as LightIcon,
+  Server as SystemIcon,
+} from "lucide-react";
 import { createContext, useContext, useEffect, useState } from "react";
-
-type Theme = "dark" | "light" | "system";
+const themes = ["dark", "light", "system"] as const;
+export type Theme = "dark" | "light" | "system";
 
 type ThemeProviderProps = {
   children: React.ReactNode;
@@ -10,11 +15,23 @@ type ThemeProviderProps = {
 
 type ThemeProviderState = {
   theme: Theme;
+  themes: readonly Theme[];
+  themeIcons: {
+    [key in Theme]: React.ComponentType<React.SVGAttributes<SVGElement>>;
+  };
   setTheme: (theme: Theme) => void;
+};
+
+const themeIcons = {
+  dark: DarkIcon,
+  light: LightIcon,
+  system: SystemIcon,
 };
 
 const initialState: ThemeProviderState = {
   theme: "system",
+  themeIcons,
+  themes,
   setTheme: () => null,
 };
 
@@ -50,6 +67,9 @@ export function ThemeProvider({
 
   const value = {
     theme,
+
+    themes,
+    themeIcons,
     setTheme: (theme: Theme) => {
       localStorage.setItem(storageKey, theme);
       setTheme(theme);

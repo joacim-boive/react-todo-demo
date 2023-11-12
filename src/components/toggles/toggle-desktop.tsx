@@ -1,19 +1,17 @@
-import { Moon, Sun } from "lucide-react";
-
-import { useTheme } from "@/components/theme-provider";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useTheme } from "@/contexts/theme-context";
+import { Button } from "@components/ui/button";
+import { Moon, Sun } from "lucide-react";
 
-export function ModeToggle() {
+const ToggleDesktop = () => {
   const { setTheme } = useTheme();
-
   return (
-    <div className="absolute top-2 right-2">
+    <div className="absolute top-2 -right-5">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="icon">
@@ -36,4 +34,6 @@ export function ModeToggle() {
       </DropdownMenu>
     </div>
   );
-}
+};
+
+export default ToggleDesktop;
