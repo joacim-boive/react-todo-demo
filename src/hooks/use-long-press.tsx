@@ -3,6 +3,10 @@ import { useEffect, useRef, useState } from "react";
 
 type Position = { x: number; y: number };
 
+const getAction = (target: HTMLElement): string => {
+  return target.nodeName === "P" ? DO_EDIT : DO_DIALOG;
+};
+
 export const useLongPress = (delay: number = 500) => {
   const pressTimer = useRef<NodeJS.Timeout | null>(null);
   const [touchedPosition, setTouchedPosition] = useState<Position>({
@@ -16,11 +20,7 @@ export const useLongPress = (delay: number = 500) => {
       const { clientX: x, clientY: y } = e.touches[0];
       pressTimer.current = setTimeout(() => {
         setTouchedPosition({ x, y });
-        if ((e?.target as HTMLElement).nodeName === "P") {
-          setDoAction(DO_EDIT);
-        } else {
-          setDoAction(DO_DIALOG);
-        }
+        setDoAction(getAction(e.target as HTMLElement));
       }, delay);
     };
 
@@ -37,6 +37,9 @@ export const useLongPress = (delay: number = 500) => {
     return () => {
       window.removeEventListener("touchstart", handleTouchStart);
       window.removeEventListener("touchend", handleTouchEnd);
+      if (pressTimer.current !== null) {
+        clearTimeout(pressTimer.current);
+      }
     };
   }, [delay]);
 
