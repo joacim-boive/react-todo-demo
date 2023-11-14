@@ -1,6 +1,7 @@
+import { DO_DIALOG } from "@/actions";
+import { useLongPress } from "@/hooks/use-long-press";
 import { fireEvent } from "@testing-library/dom";
 import { act, renderHook } from "@testing-library/react";
-import { useLongPress } from "../use-long-press";
 
 jest.useFakeTimers();
 
@@ -14,7 +15,7 @@ describe("useLongPress", () => {
       jest.advanceTimersByTime(delay + 1);
     });
 
-    expect(result?.current.showMenu).toBe(true);
+    expect(result?.current.doAction).toBe(DO_DIALOG);
   });
   it("wont set showMenu to true when window is touched for shorter than delay", () => {
     const delay = 500;
@@ -25,6 +26,6 @@ describe("useLongPress", () => {
       jest.advanceTimersByTime(delay - 1);
     });
 
-    expect(result?.current.showMenu).toBe(false);
+    expect(result?.current.doAction).toBe("");
   });
 });
