@@ -8,8 +8,8 @@ import {
 } from "@components/ui/dialog";
 
 import { useLongPress } from "@/hooks/use-long-press";
+import { useTheme } from "@/hooks/use-theme";
 import { Button } from "@components/ui/button";
-import { useTheme } from "../../contexts/theme-context";
 
 const ToggleMobile = () => {
   const { showMenu, setShowMenu } = useLongPress();

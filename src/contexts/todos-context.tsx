@@ -3,19 +3,15 @@ import { ReactNode, createContext, useEffect, useState } from "react";
 import { io } from "socket.io-client";
 const socket = io("http://localhost:4000");
 
-export const TodosContext = createContext<{
+export type TTodosContext = {
   todos: TTodoItem[];
   addTodo: (todo: TTodoItem) => void;
-  removeTodo: (id: string) => void;
-  toggleTodo: (id: string) => void;
+  removeTodo: (todo: TTodoItem) => void;
+  toggleTodo: (todo: TTodoItem) => void;
   updateTodo: (todo: TTodoItem) => void;
-}>({
-  todos: [],
-  addTodo: () => {},
-  removeTodo: () => {},
-  toggleTodo: () => {},
-  updateTodo: () => {},
-});
+};
+
+export const TodosContext = createContext<TTodosContext | undefined>(undefined);
 
 export const TodosProvider = ({ children }: { children: ReactNode }) => {
   const [todos, setTodos] = useState<TTodoItem[]>([]);

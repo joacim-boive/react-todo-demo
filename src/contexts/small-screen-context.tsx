@@ -29,10 +29,10 @@ export const ScreenSizeProvider: FC<{ children?: ReactNode }> = ({
 
   return (
     <ScreenSizeContext.Provider value={{ isSmallScreen }}>
-      {children}
-      <div id="small-screen-detector" className="hidden md:inline"></div>
+      <>
+        {children}
+        <div id="small-screen-detector" className="hidden md:inline"></div>
+      </>
     </ScreenSizeContext.Provider>
   );
 };
-
-export default ScreenSizeProvider;

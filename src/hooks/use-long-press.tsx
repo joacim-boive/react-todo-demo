@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Position = { x: number; y: number };
 
 export const useLongPress = (delay: number = 500) => {
-  const [pressTimer, setPressTimer] = useState<NodeJS.Timeout | null>(null);
+  const pressTimer = useRef<NodeJS.Timeout | null>(null);
   const [touchedPosition, setTouchedPosition] = useState<Position>({
     x: 0,
     y: 0,
@@ -13,34 +13,27 @@ export const useLongPress = (delay: number = 500) => {
   useEffect(() => {
     const handleTouchStart = (e: TouchEvent) => {
       const { clientX: x, clientY: y } = e.touches[0];
-      setPressTimer(
-        setTimeout(() => {
-          setTouchedPosition({ x, y });
-          setShowMenu(true);
-        }, delay)
-      );
+      pressTimer.current = setTimeout(() => {
+        setTouchedPosition({ x, y });
+        setShowMenu(true);
+      }, delay);
     };
 
     const handleTouchEnd = () => {
-      if (pressTimer !== null) {
-        clearTimeout(pressTimer);
-        setPressTimer(null);
+      if (pressTimer.current !== null) {
+        clearTimeout(pressTimer.current);
+        pressTimer.current = null;
       }
     };
 
-    const root = document.querySelector("html");
-    if (root) {
-      root.addEventListener("touchstart", handleTouchStart);
-      root.addEventListener("touchend", handleTouchEnd);
-    }
+    window.addEventListener("touchstart", handleTouchStart);
+    window.addEventListener("touchend", handleTouchEnd);
 
     return () => {
-      if (root) {
-        root.removeEventListener("touchstart", handleTouchStart);
-        root.removeEventListener("touchend", handleTouchEnd);
-      }
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchend", handleTouchEnd);
     };
-  }, [delay, pressTimer]);
+  }, [delay]);
 
   return { showMenu, setShowMenu, touchedPosition };
 };

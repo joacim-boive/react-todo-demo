@@ -26,12 +26,12 @@ export const TodoItem: FC<ListTodoProps> = ({ todo }) => {
     };
   }, [setIsEditing]);
 
-  const handleRemove = (id: string) => {
-    removeTodo(id);
+  const handleRemove = (todo: TTodoItem) => {
+    removeTodo(todo);
   };
 
   const handleToggle = () => {
-    toggleTodo(id);
+    toggleTodo(todo);
   };
 
   const handleUpdate = (updatedTitle: string) => {
@@ -82,7 +82,7 @@ export const TodoItem: FC<ListTodoProps> = ({ todo }) => {
             {title}
           </p>
           <Button
-            onClick={() => handleRemove(id)}
+            onClick={() => handleRemove(todo)}
             title="Delete todo"
             variant="destructive"
             className="pt-1 pb-1 pl-2 pr-2"
