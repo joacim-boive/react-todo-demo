@@ -14,6 +14,7 @@ export type TTodosContext = {
   removeTodo: (id: string) => void;
   toggleTodo: (id: string) => void;
   updateTodo: (data: TUpdateTodoPayload) => void;
+  markAllDoneTodos: () => void;
 };
 
 export const TodosContext = createContext<TTodosContext | undefined>(undefined);
@@ -55,6 +56,7 @@ export const TodosProvider = ({ children }: { children: ReactNode }) => {
     socket.on("todoRemoved", handleTodoRemove);
     socket.on("todoToggle", handleTodoToggle);
     socket.on("todoUpdate", handleTodoUpdate);
+    socket.on("todoMarkAllAsDone", handleTodosLoaded);
 
     return () => {
       socket.off("todos", handleTodosLoaded);
@@ -62,6 +64,7 @@ export const TodosProvider = ({ children }: { children: ReactNode }) => {
       socket.off("todoRemoved", handleTodoRemove);
       socket.off("todoToggle", handleTodoToggle);
       socket.off("todoUpdate", handleTodoUpdate);
+      socket.off("todoMarkAllAsDone", handleTodosLoaded);
     };
   }, []);
 
@@ -77,10 +80,20 @@ export const TodosProvider = ({ children }: { children: ReactNode }) => {
   const updateTodo = (data: TUpdateTodoPayload) => {
     socket.emit("updateTodo", data);
   };
+  const markAllDoneTodos = () => {
+    socket.emit("markAllDoneTodos");
+  };
 
   return (
     <TodosContext.Provider
-      value={{ todos, addTodo, removeTodo, toggleTodo, updateTodo }}
+      value={{
+        todos,
+        addTodo,
+        removeTodo,
+        toggleTodo,
+        updateTodo,
+        markAllDoneTodos,
+      }}
     >
       {children}
     </TodosContext.Provider>

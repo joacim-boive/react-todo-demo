@@ -20,13 +20,17 @@ const formSchema = z.object({
 });
 
 export const TodoForm = () => {
-  const { addTodo } = useTodo();
+  const { addTodo, markAllDoneTodos } = useTodo();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
     },
   });
+  const handleMarkAllDone = () => {
+    markAllDoneTodos();
+    form.reset();
+  };
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
     const todo = {
@@ -47,6 +51,7 @@ export const TodoForm = () => {
           render={({ field }) => (
             <div className="grid items-center grid-cols-10 gap-4">
               <Button
+                onClick={() => handleMarkAllDone()}
                 type="button"
                 variant="transparent"
                 size="icon"

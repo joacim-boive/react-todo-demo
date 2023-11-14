@@ -1,5 +1,4 @@
 import { TUpdateTodoPayload } from "@/contexts/todos-context";
-import { findById } from "@/lib/utils";
 import { TTodoItem } from "@/types/todo";
 import chalk from "chalk";
 import { createHttpServer, createSocketServer } from "./servers";
@@ -56,9 +55,12 @@ createSocketServer<TTodoItem>({
         try {
           console.log(logInfo(`toggleTodo with id: ${id}`));
 
-          const todoItem = findById(todos, id);
-          if (todoItem) {
-            todoItem.isCompleted = !todoItem.isCompleted;
+          const index = todos.findIndex((todo) => todo.id === id);
+          if (index !== -1) {
+            todos[index] = {
+              ...todos[index],
+              isCompleted: !todos[index].isCompleted,
+            };
             io.emit("todoToggle", id);
           } else {
             console.log(logError(`Todo with id ${id} not found`));
@@ -77,9 +79,9 @@ createSocketServer<TTodoItem>({
           console.log(logInfo(`updateTodo: ${JSON.stringify(data, null, 2)}`));
 
           const { id, title } = data;
-          const todoItem = findById(todos, id);
-          if (todoItem) {
-            todoItem.title = title;
+          const index = todos.findIndex((todo) => todo.id === id);
+          if (index !== -1) {
+            todos[index] = { ...todos[index], title };
             io.emit("todoUpdate", data);
           } else {
             console.log(logError(`Todo with id ${id} not found`, data));
@@ -87,6 +89,26 @@ createSocketServer<TTodoItem>({
         } catch (error: unknown) {
           if (error instanceof Error) {
             console.log(logError(`Error updateTodo: ${error.message}`));
+          }
+        }
+      },
+    },
+    {
+      event: "markAllDoneTodos",
+      handler: (io) => {
+        try {
+          console.log(
+            logInfo(`markAllDoneTodos: Marking all todos as completed!`)
+          );
+
+          todos = todos.map((todo) => {
+            return { ...todo, isCompleted: true };
+          });
+
+          io.emit("todoMarkAllAsDone", todos);
+        } catch (error: unknown) {
+          if (error instanceof Error) {
+            console.log(logError(`Error markAllAsDone: ${error.message}`));
           }
         }
       },
