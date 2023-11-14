@@ -19,11 +19,10 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 );
 
 // Prevent the context menu from opening and colliding with our long press on mobile.
-/* window.addEventListener(
+window.addEventListener(
   "contextmenu",
   function (e) {
     e.preventDefault();
   },
   false
 );
- */

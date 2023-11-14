@@ -27,7 +27,7 @@ io.on("connection", (socket: Socket) => {
     console.log(`💀: ${socket.id} user disconnected!`);
   });
 
-  socket.on("addTodo", (todo: TTodoItem) => {
+  socket.on("todoAdd", (todo: TTodoItem) => {
     console.log(`Add todo: ${todo.title}`);
     io.emit("todoAdded", todo);
     todos.push(todo);

@@ -1,21 +1,31 @@
+import { DO_EDIT } from "@/actions";
+import { TUpdateTodoPayload } from "@/contexts/todos-context";
+import { useLongPress } from "@/hooks/use-long-press";
 import { useTodo } from "@/hooks/use-todo";
 import { TTodoItem } from "@/types/todo";
 import { Button, Checkbox, Input } from "@components/ui";
 import { FC, useEffect, useState } from "react";
-
 type ListTodoProps = {
   todo: TTodoItem;
 };
 
 export const TodoItem: FC<ListTodoProps> = ({ todo }) => {
-  const [isEditing, setIsEditing] = useState(false);
+  const { doAction, setDoAction } = useLongPress();
   const { removeTodo, toggleTodo, updateTodo } = useTodo();
+  const [isEditing, setIsEditing] = useState(false);
   const { title, id, isCompleted } = todo;
+
+  useEffect(() => {
+    if (doAction === DO_EDIT) {
+      setIsEditing(true);
+    }
+  }, [doAction]);
 
   useEffect(() => {
     const handleKeydown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setIsEditing(false);
+        setDoAction("");
       }
     };
 
@@ -24,22 +34,19 @@ export const TodoItem: FC<ListTodoProps> = ({ todo }) => {
     return () => {
       document.removeEventListener("keydown", handleKeydown);
     };
-  }, [setIsEditing]);
+  }, [setIsEditing, setDoAction]);
 
-  const handleRemove = (todo: TTodoItem) => {
-    removeTodo(todo);
+  const handleRemove = (id: string) => {
+    removeTodo(id);
   };
 
-  const handleToggle = () => {
-    toggleTodo(todo);
+  const handleToggle = (id: string) => {
+    toggleTodo(id);
   };
 
-  const handleUpdate = (updatedTitle: string) => {
-    updateTodo({
-      id,
-      title: updatedTitle,
-      isCompleted,
-    });
+  const handleUpdate = (data: TUpdateTodoPayload) => {
+    updateTodo(data);
+    setDoAction("");
   };
 
   return (
@@ -50,7 +57,11 @@ export const TodoItem: FC<ListTodoProps> = ({ todo }) => {
       onDoubleClick={() => setIsEditing(true)}
     >
       <div className="flex items-center justify-start">
-        <Checkbox id={id} onClick={handleToggle} />
+        <Checkbox
+          id={id}
+          onClick={() => handleToggle(id)}
+          checked={isCompleted}
+        />
       </div>
       {isEditing ? (
         <form
@@ -59,7 +70,7 @@ export const TodoItem: FC<ListTodoProps> = ({ todo }) => {
             const updatedTitle = input.value;
 
             setIsEditing(false);
-            handleUpdate(updatedTitle);
+            handleUpdate({ id, title: updatedTitle });
           }}
           className="flex items-center justify-between col-span-9"
         >
@@ -82,7 +93,7 @@ export const TodoItem: FC<ListTodoProps> = ({ todo }) => {
             {title}
           </p>
           <Button
-            onClick={() => handleRemove(todo)}
+            onClick={() => handleRemove(id)}
             title="Delete todo"
             variant="destructive"
             className="pt-1 pb-1 pl-2 pr-2"

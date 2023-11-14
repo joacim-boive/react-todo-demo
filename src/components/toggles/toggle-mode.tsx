@@ -6,13 +6,13 @@ const ToggleMobile = lazy(() => import("./toggle-mobile"));
 export function ToggleMode() {
   const { isSmallScreen } = useScreenSize();
 
-  return !isSmallScreen ? (
+  return isSmallScreen ? (
     <Suspense fallback={<div>Loading...</div>}>
-      <ToggleDesktop />
+      <ToggleMobile />
     </Suspense>
   ) : (
     <Suspense fallback={<div>Loading...</div>}>
-      <ToggleMobile />
+      <ToggleDesktop />
     </Suspense>
   );
 }

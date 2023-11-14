@@ -1,3 +1,4 @@
+import { DO_DIALOG, DO_EDIT } from "@/actions";
 import { useEffect, useRef, useState } from "react";
 
 type Position = { x: number; y: number };
@@ -8,14 +9,18 @@ export const useLongPress = (delay: number = 500) => {
     x: 0,
     y: 0,
   });
-  const [showMenu, setShowMenu] = useState(false);
+  const [doAction, setDoAction] = useState("");
 
   useEffect(() => {
     const handleTouchStart = (e: TouchEvent) => {
       const { clientX: x, clientY: y } = e.touches[0];
       pressTimer.current = setTimeout(() => {
         setTouchedPosition({ x, y });
-        setShowMenu(true);
+        if ((e?.target as HTMLElement).nodeName === "P") {
+          setDoAction(DO_EDIT);
+        } else {
+          setDoAction(DO_DIALOG);
+        }
       }, delay);
     };
 
@@ -35,5 +40,5 @@ export const useLongPress = (delay: number = 500) => {
     };
   }, [delay]);
 
-  return { showMenu, setShowMenu, touchedPosition };
+  return { doAction, setDoAction, touchedPosition };
 };
