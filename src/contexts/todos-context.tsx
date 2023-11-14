@@ -3,26 +3,27 @@ import { ReactNode, createContext, useEffect, useState } from "react";
 import { io } from "socket.io-client";
 const socket = io("http://localhost:4000");
 
-export const TodosContext = createContext<{
+export type TUpdateTodoPayload = {
+  id: string;
+  title: string;
+};
+
+export type TTodosContext = {
   todos: TTodoItem[];
   addTodo: (todo: TTodoItem) => void;
   removeTodo: (id: string) => void;
   toggleTodo: (id: string) => void;
-  updateTodo: (todo: TTodoItem) => void;
-}>({
-  todos: [],
-  addTodo: () => {},
-  removeTodo: () => {},
-  toggleTodo: () => {},
-  updateTodo: () => {},
-});
+  updateTodo: (data: TUpdateTodoPayload) => void;
+};
+
+export const TodosContext = createContext<TTodosContext | undefined>(undefined);
 
 export const TodosProvider = ({ children }: { children: ReactNode }) => {
   const [todos, setTodos] = useState<TTodoItem[]>([]);
 
   useEffect(() => {
     const handleTodoAdded = (todo: TTodoItem) => {
-      setTodos((prev) => [...prev, todo]);
+      setTodos((prev) => [todo, ...prev]);
     };
 
     const handleTodosLoaded = (todos: TTodoItem[]) => {
@@ -41,9 +42,11 @@ export const TodosProvider = ({ children }: { children: ReactNode }) => {
       );
     };
 
-    const handleTodoUpdate = ({ id, title }: TTodoItem) => {
+    const handleTodoUpdate = ({ id, title }: TUpdateTodoPayload) => {
       setTodos((prev) =>
-        prev.map((todo) => (todo.id === id ? { ...todo, title } : todo))
+        prev.map((todoItem) =>
+          todoItem.id === id ? { ...todoItem, title } : todoItem
+        )
       );
     };
 
@@ -57,8 +60,8 @@ export const TodosProvider = ({ children }: { children: ReactNode }) => {
       socket.off("todos", handleTodosLoaded);
       socket.off("todoAdded", handleTodoAdded);
       socket.off("todoRemoved", handleTodoRemove);
-      socket.off("todoUpdate", handleTodoUpdate);
       socket.off("todoToggle", handleTodoToggle);
+      socket.off("todoUpdate", handleTodoUpdate);
     };
   }, []);
 
@@ -66,13 +69,13 @@ export const TodosProvider = ({ children }: { children: ReactNode }) => {
     socket.emit("addTodo", todo);
   };
   const removeTodo = (id: string) => {
-    socket.emit("removeTodo", id);
+    socket.emit("removeTodo", { id });
   };
   const toggleTodo = (id: string) => {
-    socket.emit("toggleTodo", id);
+    socket.emit("toggleTodo", { id });
   };
-  const updateTodo = (todo: TTodoItem) => {
-    socket.emit("updateTodo", todo);
+  const updateTodo = (data: TUpdateTodoPayload) => {
+    socket.emit("updateTodo", data);
   };
 
   return (

@@ -1,69 +1,95 @@
+import { TUpdateTodoPayload } from "@/contexts/todos-context";
+import { findById } from "@/lib/utils";
 import { TTodoItem } from "@/types/todo";
-import cors from "cors";
-import express, { Express, Request, Response } from "express";
-import { Server, createServer } from "http";
-import { Server as IOServer, Socket } from "socket.io";
+import chalk from "chalk";
+import { createHttpServer, createSocketServer } from "./servers";
 
 const PORT: number = 4000;
 
-const app: Express = express();
-const http: Server = createServer(app);
-
-app.use(cors());
+const logInfo = chalk.blueBright;
+const logError = chalk.red;
 
 let todos: TTodoItem[] = [];
 
-const io: IOServer = new IOServer(http, {
-  cors: {
-    origin: `http://localhost:5173`,
+const http = createHttpServer({ port: PORT });
+
+createSocketServer<TTodoItem>({
+  http,
+  corsOrigin: `http://localhost:5173`,
+  initialDataEmitter: (socket) => {
+    socket.emit("todos", todos);
   },
-});
+  socketEventHandlers: [
+    {
+      event: "addTodo",
+      handler: (io, todo) => {
+        try {
+          console.log(logInfo(`addTodo: ${JSON.stringify(todo, null, 2)}`));
 
-io.on("connection", (socket: Socket) => {
-  console.log(`💡: ${socket.id} user just connected!`);
-  io.emit("todos", todos);
+          io.emit("todoAdded", todo);
+          todos = [todo, ...todos]; //Add new todo to start of array
+        } catch (error: unknown) {
+          if (error instanceof Error) {
+            console.log(logError(`Error addTodo: ${error.message}`));
+          }
+        }
+      },
+    },
+    {
+      event: "removeTodo",
+      handler: (io, { id }) => {
+        try {
+          console.log(logInfo(`removeTodo with ID `, id));
 
-  socket.on("disconnect", () => {
-    console.log(`💀: ${socket.id} user disconnected!`);
-  });
+          todos = todos.filter((todo) => todo.id !== id);
+          io.emit("todoRemoved", id);
+        } catch (error: unknown) {
+          if (error instanceof Error) {
+            console.log(logError(`Error removeTodo: ${error.message}`));
+          }
+        }
+      },
+    },
+    {
+      event: "toggleTodo",
+      handler: (io, { id }) => {
+        try {
+          console.log(logInfo(`toggleTodo with id: ${id}`));
 
-  socket.on("addTodo", (todo: TTodoItem) => {
-    console.log(`Add todo: ${todo.title}`);
-    io.emit("todoAdded", todo);
-    todos.push(todo);
-  });
+          const todoItem = findById(todos, id);
+          if (todoItem) {
+            todoItem.isCompleted = !todoItem.isCompleted;
+            io.emit("todoToggle", id);
+          } else {
+            console.log(logError(`Todo with id ${id} not found`));
+          }
+        } catch (error: unknown) {
+          if (error instanceof Error) {
+            console.log(logError(`Error toggleTodo: ${error.message}`));
+          }
+        }
+      },
+    },
+    {
+      event: "updateTodo",
+      handler: (io, data: TUpdateTodoPayload) => {
+        try {
+          console.log(logInfo(`updateTodo: ${JSON.stringify(data, null, 2)}`));
 
-  socket.on("removeTodo", (id: string) => {
-    console.log(`Remove todo with id: ${id}`);
-    todos = todos.filter((todo) => todo.id !== id);
-
-    io.emit("todoRemoved", id);
-  });
-
-  socket.on("toggleTodo", (id: string) => {
-    console.log(`Toggle todo with id: ${id}`);
-    const todo = todos.find((todo) => todo.id === id);
-    if (todo) {
-      todo.isCompleted = !todo.isCompleted;
-      io.emit("todoToggle", id);
-    }
-  });
-
-  socket.on("updateTodo", ({ id, title }: TTodoItem) => {
-    const todo = todos.find((todo) => todo.id === id);
-    if (todo) {
-      todo.title = title;
-      io.emit("todoUpdate", { id, title });
-    }
-  });
-});
-
-app.get("/api", (req: Request, res: Response) => {
-  res.json({
-    message: "Hello world",
-  });
-});
-
-http.listen(PORT, () => {
-  console.log(`Server listening on ${PORT} `);
+          const { id, title } = data;
+          const todoItem = findById(todos, id);
+          if (todoItem) {
+            todoItem.title = title;
+            io.emit("todoUpdate", data);
+          } else {
+            console.log(logError(`Todo with id ${id} not found`, data));
+          }
+        } catch (error: unknown) {
+          if (error instanceof Error) {
+            console.log(logError(`Error updateTodo: ${error.message}`));
+          }
+        }
+      },
+    },
+  ],
 });

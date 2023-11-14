@@ -1,9 +1,9 @@
+import { ScreenSizeProvider } from "@/contexts/small-screen-context.tsx";
 import { ThemeProvider } from "@/contexts/theme-context.tsx";
 import { TodosProvider } from "@/contexts/todos-context";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./app.tsx";
-import ScreenSizeProvider from "./contexts/small-screen-context.tsx";
 import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
@@ -19,11 +19,10 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 );
 
 // Prevent the context menu from opening and colliding with our long press on mobile.
-/* window.addEventListener(
+window.addEventListener(
   "contextmenu",
   function (e) {
     e.preventDefault();
   },
   false
 );
- */

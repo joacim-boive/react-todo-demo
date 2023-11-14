@@ -7,10 +7,10 @@ import {
   FormMessage,
   Input,
 } from "@components/ui";
-import { CheckCircle } from "lucide-react";
-
 import { zodResolver } from "@hookform/resolvers/zod";
+import { CheckCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { v4 as uuidv4 } from "uuid";
 import * as z from "zod";
 
 const formSchema = z.object({
@@ -30,11 +30,10 @@ export const TodoForm = () => {
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
     const todo = {
-      id: Math.random().toString(),
+      id: uuidv4(),
       title: data.title,
       isCompleted: false,
     };
-
     addTodo(todo);
     form.reset();
   };
@@ -57,11 +56,17 @@ export const TodoForm = () => {
               </Button>
               <div className="flex items-center justify-between w-full col-span-9">
                 <FormControl className="formControl">
-                  <Input
-                    placeholder="Add a todo"
-                    {...field}
-                    className="pl-0 text-2xl "
-                  />
+                  <>
+                    <label htmlFor="title" className="sr-only">
+                      Todo Title
+                    </label>
+                    <Input
+                      id="title"
+                      placeholder="Add a todo"
+                      {...field}
+                      className="pl-0 text-2xl "
+                    />
+                  </>
                 </FormControl>
                 <FormMessage />
                 <Button type="submit" variant="default">

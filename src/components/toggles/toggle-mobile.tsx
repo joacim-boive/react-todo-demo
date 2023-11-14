@@ -7,21 +7,33 @@ import {
   DialogTitle,
 } from "@components/ui/dialog";
 
+import { DO_DIALOG } from "@/actions";
 import { useLongPress } from "@/hooks/use-long-press";
+import { useTheme } from "@/hooks/use-theme";
 import { Button } from "@components/ui/button";
-import { useTheme } from "../../contexts/theme-context";
-
+import { useEffect, useState } from "react";
 const ToggleMobile = () => {
-  const { showMenu, setShowMenu } = useLongPress();
+  const { doAction, setDoAction } = useLongPress();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { theme, setTheme, themes, themeIcons } = useTheme();
 
+  useEffect(() => {
+    setIsDialogOpen(doAction === DO_DIALOG);
+  }, [doAction]);
+
   const handleThemeChange = (theme: Theme) => {
-    setShowMenu(false);
+    setIsDialogOpen(false);
+    setDoAction("");
     setTheme(theme);
   };
 
+  const handleOpenChange = () => {
+    setIsDialogOpen(false);
+    setDoAction("");
+  };
+
   return (
-    <Dialog open={showMenu} onOpenChange={setShowMenu}>
+    <Dialog open={isDialogOpen} onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Set the theme</DialogTitle>

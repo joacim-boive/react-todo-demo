@@ -1,46 +1,47 @@
-import { useEffect, useState } from "react";
+import { DO_DIALOG, DO_EDIT } from "@/actions";
+import { useEffect, useRef, useState } from "react";
 
 type Position = { x: number; y: number };
 
+const getAction = (target: HTMLElement): string => {
+  return target.nodeName === "P" ? DO_EDIT : DO_DIALOG;
+};
+
 export const useLongPress = (delay: number = 500) => {
-  const [pressTimer, setPressTimer] = useState<NodeJS.Timeout | null>(null);
+  const pressTimer = useRef<NodeJS.Timeout | null>(null);
   const [touchedPosition, setTouchedPosition] = useState<Position>({
     x: 0,
     y: 0,
   });
-  const [showMenu, setShowMenu] = useState(false);
+  const [doAction, setDoAction] = useState("");
 
   useEffect(() => {
     const handleTouchStart = (e: TouchEvent) => {
       const { clientX: x, clientY: y } = e.touches[0];
-      setPressTimer(
-        setTimeout(() => {
-          setTouchedPosition({ x, y });
-          setShowMenu(true);
-        }, delay)
-      );
+      pressTimer.current = setTimeout(() => {
+        setTouchedPosition({ x, y });
+        setDoAction(getAction(e.target as HTMLElement));
+      }, delay);
     };
 
     const handleTouchEnd = () => {
-      if (pressTimer !== null) {
-        clearTimeout(pressTimer);
-        setPressTimer(null);
+      if (pressTimer.current !== null) {
+        clearTimeout(pressTimer.current);
+        pressTimer.current = null;
       }
     };
 
-    const root = document.querySelector("html");
-    if (root) {
-      root.addEventListener("touchstart", handleTouchStart);
-      root.addEventListener("touchend", handleTouchEnd);
-    }
+    window.addEventListener("touchstart", handleTouchStart);
+    window.addEventListener("touchend", handleTouchEnd);
 
     return () => {
-      if (root) {
-        root.removeEventListener("touchstart", handleTouchStart);
-        root.removeEventListener("touchend", handleTouchEnd);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchend", handleTouchEnd);
+      if (pressTimer.current !== null) {
+        clearTimeout(pressTimer.current);
       }
     };
-  }, [delay, pressTimer]);
+  }, [delay]);
 
-  return { showMenu, setShowMenu, touchedPosition };
+  return { doAction, setDoAction, touchedPosition };
 };

@@ -1,6 +1,6 @@
 module.exports = {
   root: true,
-  env: { browser: true, es2020: true },
+  env: { browser: true, es2020: true, jest: true },
   parserOptions: {
     ecmaVersion: "latest",
     sourceType: "module",
@@ -14,7 +14,7 @@ module.exports = {
     "plugin:react/recommended",
     "plugin:react/jsx-runtime",
   ],
-  ignorePatterns: ["dist", ".eslintrc.cjs"],
+  ignorePatterns: ["dist", ".eslintrc.cjs", "**/*.js"],
   parser: "@typescript-eslint/parser",
   plugins: ["react-refresh"],
   rules: {
