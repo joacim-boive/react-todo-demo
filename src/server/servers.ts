@@ -6,14 +6,14 @@ import { Server as IOServer, Socket } from "socket.io";
 /**
  * Type for the configuration object for the createHttpServer function.
  */
-type HttpServerConfig = {
+type THttpServerConfig = {
   port: number;
 };
 
 /**
  * Type for the configuration object for the createSocketServer function.
  */
-type SocketServerConfig<T> = {
+type TSocketServerConfig<T> = {
   http: Server;
   corsOrigin: string;
   socketEventHandlers: {
@@ -23,7 +23,7 @@ type SocketServerConfig<T> = {
   initialDataEmitter: (socket: Socket) => void;
 };
 
-const createHttpServer = ({ port }: HttpServerConfig): Server => {
+const createHttpServer = ({ port }: THttpServerConfig): Server => {
   const app: Express = express();
   const http: Server = createServer(app);
   http.listen(port, () => {
@@ -37,7 +37,7 @@ const createSocketServer = <T>({
   corsOrigin,
   socketEventHandlers,
   initialDataEmitter,
-}: SocketServerConfig<T>): IOServer => {
+}: TSocketServerConfig<T>): IOServer => {
   const io: IOServer = new IOServer(http, {
     cors: {
       origin: corsOrigin,

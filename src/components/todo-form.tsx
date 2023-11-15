@@ -51,14 +51,23 @@ export const TodoForm: FC = () => {
           name="title"
           render={({ field }) => (
             <div className="grid items-center grid-cols-10 gap-4">
+              <label htmlFor="bt-mark-all-done" className="sr-only">
+                Mark all Todos as Done!
+              </label>
               <Button
+                id="bt-mark-all-done"
                 onClick={() => handleMarkAllDone()}
                 type="button"
                 variant="transparent"
                 size="icon"
                 className="flex items-center justify-start"
               >
-                <CheckCircle size={28} strokeWidth={1} className="h-8 w-84" />
+                <CheckCircle
+                  size={28}
+                  strokeWidth={1}
+                  className="h-8 w-84"
+                  aria-label="Mark all Todos as Done!"
+                />
               </Button>
               <div className="flex items-center justify-between w-full col-span-9">
                 <FormControl className="formControl">

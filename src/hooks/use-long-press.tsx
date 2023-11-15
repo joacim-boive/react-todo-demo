@@ -2,12 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import { DO_DIALOG } from "@/actions";
 import { useAppContext } from "@/hooks/use-app-context";
 
-type Position = { x: number; y: number };
+type TPosition = { x: number; y: number };
 
 export const useLongPress = (delay: number = 500) => {
   const { isLongPressed } = useAppContext();
   const pressTimer = useRef<NodeJS.Timeout | null>(null);
-  const [touchedPosition, setTouchedPosition] = useState<Position>({
+  const [touchedPosition, setTouchedPosition] = useState<TPosition>({
     x: 0,
     y: 0,
   });

@@ -1,9 +1,9 @@
 import { useScreenSize } from "@/hooks/use-screen-size";
-import { Suspense, lazy } from "react";
+import { type FC, Suspense, lazy } from "react";
 const ToggleDesktop = lazy(() => import("@components/toggles/toggle-desktop"));
 const ToggleMobile = lazy(() => import("@components/toggles/toggle-mobile"));
 
-export function ToggleMode() {
+export const ToggleMode: FC = () => {
   const { isSmallScreen } = useScreenSize();
 
   return isSmallScreen ? (
@@ -15,4 +15,4 @@ export function ToggleMode() {
       <ToggleDesktop />
     </Suspense>
   );
-}
+};

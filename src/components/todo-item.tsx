@@ -70,6 +70,9 @@ export const TodoItem: FC<{ todo: TTodoItem }> = memo(({ todo }) => {
       <div className="flex items-center justify-start">
         <Checkbox
           id={id}
+          aria-label={`Mark the todo: "${todo.title}" as ${
+            !todo.isCompleted ? "Done" : "Not Done"
+          }`}
           onClick={() => handleToggle()}
           checked={isCompleted}
         />

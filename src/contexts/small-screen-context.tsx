@@ -1,4 +1,4 @@
-import { FC, ReactNode, createContext, useEffect, useState } from "react";
+import { type FC, ReactNode, createContext, useEffect, useState } from "react";
 
 // Define the context
 export const ScreenSizeContext = createContext({
