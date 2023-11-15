@@ -9,6 +9,7 @@ import {
 } from "@components/ui";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircle } from "lucide-react";
+import { type FC } from "react";
 import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 import * as z from "zod";
@@ -19,14 +20,18 @@ const formSchema = z.object({
   }),
 });
 
-export const TodoForm = () => {
-  const { addTodo } = useTodo();
+export const TodoForm: FC = () => {
+  const { addTodo, markAllDoneTodos } = useTodo();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
     },
   });
+  const handleMarkAllDone = () => {
+    markAllDoneTodos();
+    form.reset();
+  };
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
     const todo = {
@@ -46,13 +51,23 @@ export const TodoForm = () => {
           name="title"
           render={({ field }) => (
             <div className="grid items-center grid-cols-10 gap-4">
+              <label htmlFor="bt-mark-all-done" className="sr-only">
+                Mark all Todos as Done!
+              </label>
               <Button
+                id="bt-mark-all-done"
+                onClick={() => handleMarkAllDone()}
                 type="button"
                 variant="transparent"
                 size="icon"
                 className="flex items-center justify-start"
               >
-                <CheckCircle size={28} strokeWidth={1} className="h-8 w-84" />
+                <CheckCircle
+                  size={28}
+                  strokeWidth={1}
+                  className="h-8 w-84"
+                  aria-label="Mark all Todos as Done!"
+                />
               </Button>
               <div className="flex items-center justify-between w-full col-span-9">
                 <FormControl className="formControl">

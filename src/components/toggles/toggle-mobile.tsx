@@ -11,9 +11,10 @@ import { DO_DIALOG } from "@/actions";
 import { useLongPress } from "@/hooks/use-long-press";
 import { useTheme } from "@/hooks/use-theme";
 import { Button } from "@components/ui/button";
-import { useEffect, useState } from "react";
-const ToggleMobile = () => {
-  const { doAction, setDoAction } = useLongPress();
+import { type FC, useEffect, useState } from "react";
+
+const ToggleMobile: FC = () => {
+  const { doAction, setDoAction } = useLongPress(1000);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { theme, setTheme, themes, themeIcons } = useTheme();
 

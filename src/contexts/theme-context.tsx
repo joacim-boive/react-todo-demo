@@ -4,7 +4,9 @@ import {
   Server as SystemIcon,
 } from "lucide-react";
 import { createContext, useEffect, useState } from "react";
+
 const themes = ["dark", "light", "system"] as const;
+
 export type Theme = "dark" | "light" | "system";
 
 type ThemeProviderProps = {

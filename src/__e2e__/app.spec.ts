@@ -1,4 +1,4 @@
-import { TTodoItem } from "@/types/todo";
+import { type TTodoItem } from "@/types/todo";
 import { createServer } from "http";
 import { AddressInfo } from "net";
 import { Server, Socket as ServerSocket } from "socket.io";

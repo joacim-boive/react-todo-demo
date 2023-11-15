@@ -7,8 +7,9 @@ import {
 import { useTheme } from "@/hooks/use-theme";
 import { Button } from "@components/ui/button";
 import { Moon, Sun } from "lucide-react";
+import { type FC } from "react";
 
-const ToggleDesktop = () => {
+const ToggleDesktop: FC = () => {
   const { setTheme } = useTheme();
   return (
     <div className="absolute top-2 -right-5">
