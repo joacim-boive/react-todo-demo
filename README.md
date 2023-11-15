@@ -11,4 +11,13 @@
 - (developer): I as a user on a mobile device can long press on a todo item to edit it.
 - (developer): I as a user on a mobile device can long press anywhere else to open a dialog to handle different application team.
 
+#TODOS
+
+- Write tests
+- Persist Todos on the Node server
+- Implement drag and drop sorting of Todos
+- Login to access your todos.
+- Share todo list with others through a sharing link.
+- Filter todos by status: All, Active, Completed.
+
 https://github.com/orgs/react-hook-form/discussions/8622
