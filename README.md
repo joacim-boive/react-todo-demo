@@ -1,10 +1,8 @@
 # To Run the App
 
 - Install dependencies: `npm install`
-- Build: `npm run build`
 - Run Node server: `npm run start:server`
-- Change to the dist folder in the root.
-- Run http-server: `npx serve`
+- Run React app: `npm run dev`
 
 # Implementation details
 
@@ -27,6 +25,8 @@ The app is built using React, socket.io, TailwindCSS and ShadCN/UI
 
 # TODOS
 
+- Make a production ready build
+- Release to production
 - Write tests
 - Persist Todos on the Node server
 - Implement drag and drop sorting of Todos
