@@ -1,10 +1,16 @@
-#To Run the App
+# To Run the App
 
 - Install dependencies: `npm install`
 - Build: `npm run build`
 - Run Node server: `npm run start:server`
 - Change to the dist folder in the root.
 - Run http-server: `npx serve`
+
+# Implementation details
+
+The app is built using React, socket.io, TailwindCSS and ShadCN/UI
+
+# User Stories
 
 - (required): I as a user can create to-do items, such as a grocery list.
 - (required): I as another user can collaborate in real-time with user - so that we can (for example) edit our family shopping-list together.
@@ -19,7 +25,7 @@
 - (developer): I as a user on a mobile device can long press on a todo item to edit it.
 - (developer): I as a user on a mobile device can long press anywhere else to open a dialog to handle different application team.
 
-#TODOS
+# TODOS
 
 - Write tests
 - Persist Todos on the Node server
