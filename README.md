@@ -17,11 +17,11 @@ The app is built using React, socket.io, TailwindCSS and ShadCN/UI
 - (developer): I as a user can mark all todos as complete using one button.
 - (developer): I as a user can only have one todo item in edit mode at a time.
 - (developer): I as a user can only add a todo item consisting of two or more characters.
-- (developer): I as a user delete a todo item by pressing the delete button.
-- (developer): I as a user on a desktop device can click the theme button a handle the application team.
+- (developer): I as a user can delete a todo item by pressing the delete button.
+- (developer): I as a user on a desktop device can click the theme button and handle the application theme.
 - (developer): I as a user on a desktop device can double click on a todo item to edit it.
 - (developer): I as a user on a mobile device can long press on a todo item to edit it.
-- (developer): I as a user on a mobile device can long press anywhere else to open a dialog to handle different application team.
+- (developer): I as a user on a mobile device can long press anywhere else to open a dialog to handle the different application themes.
 
 # TODOS
 
