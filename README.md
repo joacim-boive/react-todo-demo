@@ -3,6 +3,7 @@
 - Install dependencies: `npm install`
 - Build: `npm run build`
 - Run Node server: `npm run start:server`
+- Change to the dist folder in the root.
 - Run http-server: `npx serve`
 
 - (required): I as a user can create to-do items, such as a grocery list.
