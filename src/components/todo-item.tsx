@@ -1,22 +1,17 @@
-import { DO_EDIT } from "@/actions";
-import { useLongPress } from "@/hooks/use-long-press";
 import { useTodo } from "@/hooks/use-todo";
-import { TTodoItem } from "@/types/todo";
+import { useAppContext } from "@/hooks/use-app-context";
+import { type TTodoItem } from "@/types/todo";
 import { Button, Checkbox, Input } from "@components/ui";
 import clsx from "clsx";
-import { FC, useCallback, useEffect, useState } from "react";
-
-type TListTodoProps = {
-  todo: TTodoItem;
-};
+import { memo, useCallback, useEffect, useState, useRef, type FC } from "react";
 
 const ESCAPE_KEY = "Escape";
 const DELETE_TODO_TITLE = "Delete todo";
 const DOUBLE_CLICK_TO_EDIT_TITLE = "Double click to edit";
 
-export const TodoItem: FC<TListTodoProps> = ({ todo }) => {
-  const { doAction, setDoAction } = useLongPress();
+export const TodoItem: FC<{ todo: TTodoItem }> = memo(({ todo }) => {
   const { removeTodo, toggleTodo, updateTodo } = useTodo();
+  const { setIsLongPressed } = useAppContext();
   const [isEditing, setIsEditing] = useState(false);
   const { title, id, isCompleted } = todo;
 
@@ -25,23 +20,32 @@ export const TodoItem: FC<TListTodoProps> = ({ todo }) => {
   const handleUpdate = useCallback(
     (title: string) => {
       updateTodo({ id, title });
-      setDoAction("");
     },
-    [updateTodo, setDoAction, id]
+    [updateTodo, id]
   );
 
+  const longPressTimer = useRef<NodeJS.Timeout>();
+  const handleLongPressStart = () => {
+    setIsLongPressed(true);
+    longPressTimer.current = setTimeout(() => setIsEditing(true), 500);
+  };
+  const handleLongPressEnd = () => {
+    setIsLongPressed(false);
+    clearTimeout(longPressTimer.current);
+  };
   useEffect(() => {
-    if (doAction === DO_EDIT) {
-      setIsEditing(true);
-    }
-  }, [doAction]);
+    return () => {
+      clearTimeout(longPressTimer.current);
+    };
+  }, []);
+
+  const doneEditing = useCallback(() => {
+    setIsEditing(false);
+  }, []);
 
   useEffect(() => {
     const handleKeydown = (event: KeyboardEvent) => {
-      if (event.key === ESCAPE_KEY) {
-        setIsEditing(false);
-        setDoAction("");
-      }
+      if (event.key === ESCAPE_KEY) doneEditing();
     };
 
     document.addEventListener("keydown", handleKeydown);
@@ -49,7 +53,7 @@ export const TodoItem: FC<TListTodoProps> = ({ todo }) => {
     return () => {
       document.removeEventListener("keydown", handleKeydown);
     };
-  }, [setIsEditing, setDoAction]);
+  }, [doneEditing]);
 
   const listItemClasses = clsx(
     "group grid items-center grid-cols-10 pt-2 pb-2 pl-1 pr-1 md:pl-4 md:pr-4 gap-4 border-t border-gray-200 first:border-0",
@@ -57,7 +61,12 @@ export const TodoItem: FC<TListTodoProps> = ({ todo }) => {
   );
 
   return (
-    <li className={listItemClasses} onDoubleClick={() => setIsEditing(true)}>
+    <li
+      onTouchStart={handleLongPressStart}
+      onTouchEnd={handleLongPressEnd}
+      className={listItemClasses}
+      onDoubleClick={() => setIsEditing(true)}
+    >
       <div className="flex items-center justify-start">
         <Checkbox
           id={id}
@@ -68,10 +77,11 @@ export const TodoItem: FC<TListTodoProps> = ({ todo }) => {
       {isEditing ? (
         <form
           onSubmit={(e) => {
+            e.preventDefault();
             const input = e.currentTarget[0] as HTMLInputElement;
             const updatedTitle = input.value;
 
-            setIsEditing(false);
+            doneEditing();
             handleUpdate(updatedTitle);
           }}
           className="flex items-center justify-between col-span-9"
@@ -81,6 +91,7 @@ export const TodoItem: FC<TListTodoProps> = ({ todo }) => {
             defaultValue={title}
             title={DOUBLE_CLICK_TO_EDIT_TITLE}
             autoFocus
+            onBlur={() => setIsEditing(false)}
             className={`flex-grow pl-0 text-xl font-normal bg-transparent`}
           />
         </form>
@@ -106,4 +117,6 @@ export const TodoItem: FC<TListTodoProps> = ({ todo }) => {
       )}
     </li>
   );
-};
+});
+
+TodoItem.displayName = "TodoItem";

@@ -1,6 +1,6 @@
 import { useTodo } from "@/hooks/use-todo";
 import { TodoItem } from "@components/todo-item";
-import { FC } from "react";
+import { type FC } from "react";
 
 export const TodoList: FC = () => {
   const { todos } = useTodo();

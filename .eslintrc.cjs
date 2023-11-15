@@ -32,5 +32,7 @@ module.exports = {
       "warn",
       { allowConstantExport: true },
     ],
+    // Making sure we're notified if we need to use a callback when setting state.
+    "react-hooks/exhaustive-deps": "error",
   },
 };

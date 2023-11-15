@@ -1,13 +1,11 @@
-import { DO_DIALOG, DO_EDIT } from "@/actions";
 import { useEffect, useRef, useState } from "react";
+import { DO_DIALOG } from "@/actions";
+import { useAppContext } from "@/hooks/use-app-context";
 
 type Position = { x: number; y: number };
 
-const getAction = (target: HTMLElement): string => {
-  return target.nodeName === "P" ? DO_EDIT : DO_DIALOG;
-};
-
 export const useLongPress = (delay: number = 500) => {
+  const { isLongPressed } = useAppContext();
   const pressTimer = useRef<NodeJS.Timeout | null>(null);
   const [touchedPosition, setTouchedPosition] = useState<Position>({
     x: 0,
@@ -17,10 +15,12 @@ export const useLongPress = (delay: number = 500) => {
 
   useEffect(() => {
     const handleTouchStart = (e: TouchEvent) => {
+      if (isLongPressed) return; //Another longpres is in progress
+
       const { clientX: x, clientY: y } = e.touches[0];
       pressTimer.current = setTimeout(() => {
         setTouchedPosition({ x, y });
-        setDoAction(getAction(e.target as HTMLElement));
+        setDoAction(DO_DIALOG);
       }, delay);
     };
 
@@ -41,7 +41,7 @@ export const useLongPress = (delay: number = 500) => {
         clearTimeout(pressTimer.current);
       }
     };
-  }, [delay]);
+  }, [delay, isLongPressed]);
 
   return { doAction, setDoAction, touchedPosition };
 };

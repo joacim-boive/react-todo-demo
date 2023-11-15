@@ -13,7 +13,7 @@ import { useTheme } from "@/hooks/use-theme";
 import { Button } from "@components/ui/button";
 import { useEffect, useState } from "react";
 const ToggleMobile = () => {
-  const { doAction, setDoAction } = useLongPress();
+  const { doAction, setDoAction } = useLongPress(1000);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { theme, setTheme, themes, themeIcons } = useTheme();
 

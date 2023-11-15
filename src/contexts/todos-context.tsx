@@ -1,7 +1,29 @@
-import { TTodoItem } from "@/types/todo";
-import { ReactNode, createContext, useEffect, useState } from "react";
+import { type TTodoItem } from "@/types/todo";
+import {
+  createContext,
+  useEffect,
+  useState,
+  type FC,
+  type ReactNode,
+} from "react";
 import { io } from "socket.io-client";
-const socket = io("http://localhost:4000");
+
+import {
+  SERVER_REQUEST_TODO_ADD,
+  SERVER_CONFIRM_TODO_ADD,
+  SERVER_REQUEST_TODO_REMOVE,
+  SERVER_CONFIRM_TODO_REMOVE,
+  SERVER_REQUEST_TODO_UPDATE,
+  SERVER_CONFIRM_TODO_UPDATE,
+  SERVER_REQUEST_TODO_TOGGLE,
+  SERVER_CONFIRM_TODO_TOGGLE,
+  SERVER_REQUEST_TODOS_ALL_DONE,
+  SERVER_CONFIRM_TODOS_ALL_DONE,
+  //SERVER_REQUEST_TODOS_LOAD,
+  SERVER_CONFIRM_TODOS_LOAD,
+} from "@/event-names";
+
+import { URL, SOCKET_SERVER_PORT } from "@/config";
 
 export type TUpdateTodoPayload = {
   id: string;
@@ -17,9 +39,11 @@ export type TTodosContext = {
   markAllDoneTodos: () => void;
 };
 
+const socket = io(`${URL}:${SOCKET_SERVER_PORT}`);
+
 export const TodosContext = createContext<TTodosContext | undefined>(undefined);
 
-export const TodosProvider = ({ children }: { children: ReactNode }) => {
+export const TodosProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [todos, setTodos] = useState<TTodoItem[]>([]);
 
   useEffect(() => {
@@ -31,11 +55,11 @@ export const TodosProvider = ({ children }: { children: ReactNode }) => {
       setTodos(todos);
     };
 
-    const handleTodoRemove = (id: string) => {
+    const handleTodoRemoved = (id: string) => {
       setTodos((prev) => prev.filter((todo) => todo.id !== id));
     };
 
-    const handleTodoToggle = (id: string) => {
+    const handleTodoToggled = (id: string) => {
       setTodos((prev) =>
         prev.map((todo) =>
           todo.id === id ? { ...todo, isCompleted: !todo.isCompleted } : todo
@@ -43,7 +67,7 @@ export const TodosProvider = ({ children }: { children: ReactNode }) => {
       );
     };
 
-    const handleTodoUpdate = ({ id, title }: TUpdateTodoPayload) => {
+    const handleTodoUpdated = ({ id, title }: TUpdateTodoPayload) => {
       setTodos((prev) =>
         prev.map((todoItem) =>
           todoItem.id === id ? { ...todoItem, title } : todoItem
@@ -51,37 +75,38 @@ export const TodosProvider = ({ children }: { children: ReactNode }) => {
       );
     };
 
-    socket.on("todos", handleTodosLoaded);
-    socket.on("todoAdded", handleTodoAdded);
-    socket.on("todoRemoved", handleTodoRemove);
-    socket.on("todoToggle", handleTodoToggle);
-    socket.on("todoUpdate", handleTodoUpdate);
-    socket.on("todoMarkAllAsDone", handleTodosLoaded);
+    // Listen for events
+    socket.on(SERVER_CONFIRM_TODOS_LOAD, handleTodosLoaded);
+    socket.on(SERVER_CONFIRM_TODO_ADD, handleTodoAdded);
+    socket.on(SERVER_CONFIRM_TODO_REMOVE, handleTodoRemoved);
+    socket.on(SERVER_CONFIRM_TODO_TOGGLE, handleTodoToggled);
+    socket.on(SERVER_CONFIRM_TODO_UPDATE, handleTodoUpdated);
+    socket.on(SERVER_CONFIRM_TODOS_ALL_DONE, handleTodosLoaded);
 
     return () => {
-      socket.off("todos", handleTodosLoaded);
-      socket.off("todoAdded", handleTodoAdded);
-      socket.off("todoRemoved", handleTodoRemove);
-      socket.off("todoToggle", handleTodoToggle);
-      socket.off("todoUpdate", handleTodoUpdate);
-      socket.off("todoMarkAllAsDone", handleTodosLoaded);
+      socket.off(SERVER_CONFIRM_TODOS_LOAD, handleTodosLoaded);
+      socket.off(SERVER_CONFIRM_TODO_ADD, handleTodoAdded);
+      socket.off(SERVER_CONFIRM_TODO_REMOVE, handleTodoRemoved);
+      socket.off(SERVER_CONFIRM_TODO_TOGGLE, handleTodoToggled);
+      socket.off(SERVER_CONFIRM_TODO_UPDATE, handleTodoUpdated);
+      socket.off(SERVER_CONFIRM_TODOS_ALL_DONE, handleTodosLoaded);
     };
   }, []);
 
   const addTodo = (todo: TTodoItem) => {
-    socket.emit("addTodo", todo);
+    socket.emit(SERVER_REQUEST_TODO_ADD, todo);
   };
   const removeTodo = (id: string) => {
-    socket.emit("removeTodo", { id });
+    socket.emit(SERVER_REQUEST_TODO_REMOVE, { id });
   };
   const toggleTodo = (id: string) => {
-    socket.emit("toggleTodo", { id });
+    socket.emit(SERVER_REQUEST_TODO_TOGGLE, { id });
   };
   const updateTodo = (data: TUpdateTodoPayload) => {
-    socket.emit("updateTodo", data);
+    socket.emit(SERVER_REQUEST_TODO_UPDATE, data);
   };
   const markAllDoneTodos = () => {
-    socket.emit("markAllDoneTodos");
+    socket.emit(SERVER_REQUEST_TODOS_ALL_DONE);
   };
 
   return (

@@ -9,6 +9,7 @@ import {
 } from "@components/ui";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircle } from "lucide-react";
+import { type FC } from "react";
 import { useForm } from "react-hook-form";
 import { v4 as uuidv4 } from "uuid";
 import * as z from "zod";
@@ -19,7 +20,7 @@ const formSchema = z.object({
   }),
 });
 
-export const TodoForm = () => {
+export const TodoForm: FC = () => {
   const { addTodo, markAllDoneTodos } = useTodo();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

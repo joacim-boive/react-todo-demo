@@ -1,8 +1,9 @@
 import { TodoForm } from "@/components/todo-form";
 import { TodoList } from "@/components/todo-list";
 import { ToggleMode } from "@/components/toggles/toggle-mode";
+import { type FC } from "react";
 
-const App = () => {
+const App: FC = () => {
   return (
     <section className="relative justify-center mx-auto md:pt-8 md:w-2/3 lg:w-1/2 xl:min-w-min">
       <h1
