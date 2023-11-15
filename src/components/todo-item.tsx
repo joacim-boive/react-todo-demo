@@ -36,12 +36,14 @@ export const TodoItem: FC<{ todo: TTodoItem }> = memo(({ todo }) => {
   useEffect(() => {
     return () => {
       clearTimeout(longPressTimer.current);
+      setIsLongPressed(false);
     };
-  }, []);
+  }, [setIsLongPressed]);
 
   const doneEditing = useCallback(() => {
     setIsEditing(false);
-  }, []);
+    setIsLongPressed(false);
+  }, [setIsLongPressed]);
 
   useEffect(() => {
     const handleKeydown = (event: KeyboardEvent) => {
@@ -94,7 +96,7 @@ export const TodoItem: FC<{ todo: TTodoItem }> = memo(({ todo }) => {
             defaultValue={title}
             title={DOUBLE_CLICK_TO_EDIT_TITLE}
             autoFocus
-            onBlur={() => setIsEditing(false)}
+            onBlur={doneEditing}
             className={`flex-grow pl-0 text-xl font-normal bg-transparent`}
           />
         </form>
