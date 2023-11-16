@@ -2,7 +2,7 @@ import { TodoForm } from "@/components/todo-form";
 import { TodoList } from "@/components/todo-list";
 import { ToggleMode } from "@/components/toggles/toggle-mode";
 import { type FC } from "react";
-
+// Get it?
 const App: FC = () => {
   return (
     <main role="main">
