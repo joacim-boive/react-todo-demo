@@ -20,7 +20,6 @@ type TSocketServerConfig<T> = {
     event: string;
     handler: (io: IOServer, data: T) => void;
   }[];
-  initialDataEmitter: (socket: Socket) => void;
 };
 
 const createHttpServer = ({ port }: THttpServerConfig): Server => {
@@ -36,7 +35,6 @@ const createSocketServer = <T>({
   http,
   corsOrigin,
   socketEventHandlers,
-  initialDataEmitter,
 }: TSocketServerConfig<T>): IOServer => {
   const io: IOServer = new IOServer(http, {
     cors: {
@@ -46,8 +44,6 @@ const createSocketServer = <T>({
 
   io.on("connection", (socket: Socket) => {
     console.log(`💡: ${socket.id} user just connected!`);
-
-    initialDataEmitter(socket);
 
     socket.on("disconnect", () => {
       console.log(`💀: ${socket.id} user disconnected!`);

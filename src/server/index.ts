@@ -14,7 +14,7 @@ import {
   SERVER_CONFIRM_TODO_TOGGLE,
   SERVER_REQUEST_TODOS_ALL_DONE,
   SERVER_CONFIRM_TODOS_ALL_DONE,
-  //SERVER_REQUEST_TODOS_LOAD,
+  SERVER_REQUEST_TODOS_LOAD,
   SERVER_CONFIRM_TODOS_LOAD,
 } from "@/event-names";
 
@@ -32,10 +32,26 @@ const http = createHttpServer({ port: SOCKET_SERVER_PORT });
 createSocketServer<TTodoItem>({
   http,
   corsOrigin: CORS_ORIGIN,
-  initialDataEmitter: (socket) => {
-    socket.emit(SERVER_CONFIRM_TODOS_LOAD, todos);
-  },
   socketEventHandlers: [
+    {
+      event: SERVER_REQUEST_TODOS_LOAD,
+      handler: (io) => {
+        try {
+          io.emit(SERVER_CONFIRM_TODOS_LOAD, todos);
+          console.log(
+            logInfo(
+              `${SERVER_CONFIRM_TODOS_LOAD}: ${JSON.stringify(todos, null, 2)}`
+            )
+          );
+        } catch (error: unknown) {
+          if (error instanceof Error) {
+            console.log(
+              logError(`Error ${SERVER_REQUEST_TODOS_LOAD}: ${error.message}`)
+            );
+          }
+        }
+      },
+    },
     {
       event: SERVER_REQUEST_TODO_ADD,
       handler: (io, todo) => {

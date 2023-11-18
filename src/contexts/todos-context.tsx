@@ -19,7 +19,7 @@ import {
   SERVER_CONFIRM_TODO_TOGGLE,
   SERVER_REQUEST_TODOS_ALL_DONE,
   SERVER_CONFIRM_TODOS_ALL_DONE,
-  //SERVER_REQUEST_TODOS_LOAD,
+  SERVER_REQUEST_TODOS_LOAD,
   SERVER_CONFIRM_TODOS_LOAD,
 } from "@/event-names";
 
@@ -47,18 +47,42 @@ export const TodosProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [todos, setTodos] = useState<TTodoItem[]>([]);
 
   useEffect(() => {
-    const handleTodoAdded = (todo: TTodoItem) => {
-      setTodos((prev) => [todo, ...prev]);
-    };
-
+    /**
+     * This method is used to handle the loading of todos.
+     * It takes an array of todo items as a parameter and sets the state of todos with it.
+     *
+     * @param {TTodoItem[]} todos - An array of todo items
+     */
     const handleTodosLoaded = (todos: TTodoItem[]) => {
       setTodos(todos);
     };
 
+    /**
+     * This method is used to handle the addition of a new todo item.
+     * It takes a todo item as a parameter and prepends it to the existing list of todos.
+     *
+     * @param {TTodoItem} todo - The new todo item to be added
+     */
+    const handleTodoAdded = (todo: TTodoItem) => {
+      setTodos((prev) => [todo, ...prev]);
+    };
+
+    /**
+     * This method is used to handle the removal of a todo item.
+     * It takes the id of a todo item as a parameter and removes it from the existing list of todos.
+     *
+     * @param {string} id - The id of the todo item to be removed
+     */
     const handleTodoRemoved = (id: string) => {
       setTodos((prev) => prev.filter((todo) => todo.id !== id));
     };
 
+    /**
+     * This method is used to handle the toggling of a todo item's completion status.
+     * It takes the id of a todo item as a parameter and toggles its 'isCompleted' status.
+     *
+     * @param {string} id - The id of the todo item to be toggled
+     */
     const handleTodoToggled = (id: string) => {
       setTodos((prev) =>
         prev.map((todo) =>
@@ -67,6 +91,12 @@ export const TodosProvider: FC<{ children: ReactNode }> = ({ children }) => {
       );
     };
 
+    /**
+     * This method is used to handle the updating of a todo item's title.
+     * It takes an object as a parameter which includes the id of the todo item to be updated and the new title.
+     *
+     * @param {TUpdateTodoPayload} payload - An object containing the id of the todo item to be updated and the new title
+     */
     const handleTodoUpdated = ({ id, title }: TUpdateTodoPayload) => {
       setTodos((prev) =>
         prev.map((todoItem) =>
@@ -91,6 +121,11 @@ export const TodosProvider: FC<{ children: ReactNode }> = ({ children }) => {
       socket.off(SERVER_CONFIRM_TODO_UPDATE, handleTodoUpdated);
       socket.off(SERVER_CONFIRM_TODOS_ALL_DONE, handleTodosLoaded);
     };
+  }, []);
+
+  useEffect(() => {
+    // Make sure the client is ready to recieve it's first event
+    socket.emit(SERVER_REQUEST_TODOS_LOAD);
   }, []);
 
   const addTodo = (todo: TTodoItem) => {
